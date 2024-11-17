@@ -82,7 +82,9 @@ spec:
               cpu: "500m"
 
       volumes:
-        name:
+        - name: sql-storage
+          persistentVolumeClaim:
+            name: sql-persistent-claim
 
 ---
 apiVersion: v1
