@@ -33,9 +33,9 @@ metadata:
   name: sql-secret
 type: Opaque
 data:
-  sql-db: bankappdb
-  sql-user: root
-  sql-pass: "Test@123"
+  sql-db: YmFua2FwcGRi
+  sql-user: cm9vdA==
+  sql-pass: VGVzdEAxMjM=
 
 ---
 apiVersion: apps/v1
@@ -93,9 +93,7 @@ kind: Service
 metadata:
   name: sql-service
 spec:
-  type: ClusterIP
   selector:
     app: sql-server-pod
   ports:
-    - protocol: "TCP"
-      port: 3306
+    port: 3306
