@@ -34,6 +34,7 @@ metadata:
 type: Opaque
 data:
   sql-db: bankappdb
+  sql-user: root
   sql-pass: "Test@123"
 
 ---
@@ -98,4 +99,3 @@ spec:
   ports:
     - protocol: "TCP"
       port: 3306
-      targetPort: 3306
