@@ -7,8 +7,9 @@ metadata:
 spec:
   replicas: 2
   selector:
-    matchLabels: java-deployment-pod
-    version: blue-env
+    matchLabels:
+      name: java-deployment-pod
+      version: blue-env
   template:
     metadata:
       labels:
@@ -40,4 +41,3 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "1"
-

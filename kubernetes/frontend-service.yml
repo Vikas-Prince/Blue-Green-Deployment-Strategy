@@ -6,6 +6,7 @@ spec:
   type: LoadBalancer
   selector:
     name: java-deployment-pod
+    version: blue-env
   ports:
     - protocol: TCP
       port: 80

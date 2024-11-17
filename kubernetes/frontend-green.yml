@@ -7,8 +7,9 @@ metadata:
 spec:
   replicas: 2
   selector:
-    matchLabels: java-deployment-pod
-    version: green-env
+    matchLabels:
+      name: java-deployment-pod
+      version: green-env
   template:
     metadata:
       labels:
