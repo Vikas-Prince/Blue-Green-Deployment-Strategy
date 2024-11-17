@@ -64,7 +64,7 @@ pipeline{
 
         stage("Build Docker Image"){
             steps{
-                withDockerRegistry(credentialsId: 'docker-cred') {
+                withDockerRegistry(credentialsId: 'docker-cred', url: "https://index.docker.io/v1/") {
                     sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
@@ -78,7 +78,7 @@ pipeline{
 
         stage("Push to Docker hub"){
             steps{
-                withDockerRegistry(credentialsId: 'docker-cred') {
+                withDockerRegistry(credentialsId: 'docker-cred', url:"https://index.docker.io/v1/") {
                     sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
@@ -88,13 +88,22 @@ pipeline{
 
     post{
         always{
-            emailext{
-                subject: "Build Result"
+            emailext(
+                subject: "Build Result: ${currentBuild.currentResult}",
                 body: """
                     Hi Team,
-                """
-                to: "mppschool798@gmail.com"
-            }
+
+                    Please find attached the Trivy security scan results for this build.
+
+                    Build Status: ${currentBuild.currentResult}
+                    Build URL: ${env.BUILD_URL}
+
+                    Thanks,
+                    Jenkins
+                """,
+                to: "mppschool798@gmail.com",
+                attachFiles: "image-report.json" // Attach the Trivy report
+            )
         }
     }
 }
