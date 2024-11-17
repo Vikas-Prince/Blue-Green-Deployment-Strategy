@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sql-persistent
+spec:
+  capacity:
+    storage: "2.5Gi"
+
+  accessModes:
+    - ReadWriteOnce
+
+  hostPath:
+    path: /sql/data
+
+  persistentVolumeReclaimPolicy: Retain
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sql-persistent-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "2Gi"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sql-secret
+type: Opaque
+data:
+  sql-db: bankappdb
+  sql-pass: "Test@123"
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    name: sql-server
+    maintainer: vikas
+spec:
+  replicas: 2
+  selector:
+    matchLabels: sql-server-pod
+  template:
+    labels:
+      app: sql-server-pod
+    spec:
+      containers:
+        - name: sql-server-container
+          image: mysql:8
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: sql-secret
+                  key: sql-db
+
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sql-secret
+                  key: sql-pass
+
+          volumeMounts:
+            name: sql-storage
+            path: /var/lib/mysql
+
+          ports:
+            - containerPort: 3306
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+
+      volumes:
+        name:
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sql-service
+spec:
+  type: ClusterIP
+  selector:
+    app: sql-server-pod
+  ports:
+    - protocol: "TCP"
+      port: 3306
+      targetPort: 3306
