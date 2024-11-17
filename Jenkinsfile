@@ -35,7 +35,7 @@ pipeline{
 
         stage("Trivy File System Scan"){
             steps{
-                sh "trivy fs --format json -o fs-report.json ."
+                sh "trivy fs --format json -o trivy-fs-report.json ."
             }
         }
 
@@ -72,7 +72,7 @@ pipeline{
 
         stage("Docker Image Scan using Trivy"){
             steps{
-                sh "trivy image --format json -o image-report.json ."
+                sh "trivy image --format json -o trivy-image-report.json ."
             }
         }
 
@@ -102,7 +102,7 @@ pipeline{
                     Jenkins
                 """,
                 to: "mppschool798@gmail.com",
-                attachFiles: "image-report.json" // Attach the Trivy report
+                 attachmentsPattern: 'trivy*.json' // Attach the Trivy report
             )
         }
     }
