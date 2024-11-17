@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-deployment
+  labels:
+    name: java-deployment-blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels: java-deployment-pod
+    version: blue-env
+  template:
+    metadata:
+      labels:
+        name: java-deployment-pod
+        version: blue-env
+    spec:
+      - name: java-frontend-container
+        image: vikasprince/javabankapp:blue
+        ports:
+          - containerPort: 8080
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:mysql://mysql-service:3306/bankappdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+          - name: SPRING_DATASOURCE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: sql-secret
+                key: sql-user
+          - name: SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sql-secret
+                key: sql-pass
+
+        resources:
+          requests:
+            memory: "0.5Gi"
+            cpu: "0.5"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+
